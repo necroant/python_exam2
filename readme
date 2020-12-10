@@ -29,3 +29,5 @@ output_format (json или csv), если не указано, то выводи
 “price” - число с плавающей запятой, обязательное значение
 “discount” - натуральное число от 1 до 100, необязательное значение
 “author” - список авторов. Спиок строк от 1 до 3 значений.
+
+https://docs.google.com/document/d/1xLJWOT_luNtUEWkM8WE4AQDiN_vLWV46Qn09jXNLCbc/edit
