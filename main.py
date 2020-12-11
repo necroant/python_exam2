@@ -1,4 +1,5 @@
 import conf
+
 import argparse
 import json
 import random
@@ -11,13 +12,17 @@ def main():
     parser = create_parser()
     args = parser.parse_args()
     my_gen_book = generate_book(args)
+    book_list = []
     for i in range(args.count):
-        print(next(my_gen_book))
+        book_list.append(next(my_gen_book))
+        # print(next(my_gen_book))
+
+    to_json(book_list, "cancer.json")
 
 
-def to_json(obj, filename):  # todo Добавить опцию выбора длины отступа
+def to_json(obj, filename, dent=4):
     with open(filename, 'w', encoding="utf-8") as json_file:
-        json.dump(obj, json_file, indent=4)
+        json.dump(obj, json_file, indent=dent, ensure_ascii=False)
 
 
 def create_parser():
@@ -29,6 +34,10 @@ def create_parser():
 
 
 def fetch_title():
+    """
+    Fetching the title for a book
+    :return: random title from the list in file set by BOOK_TITLES
+    """
     with open(conf.BOOK_TITLES, encoding="utf-8") as titles:
         title_list = titles.readlines()
     title_list = [line.strip("\n") for line in title_list]
@@ -39,7 +48,7 @@ def fetch_title():
 
 def check_name_file(name_list):
     for line in name_list:
-        a = re.fullmatch("[(A-Z)(А-Я)][(a-z)(а-я)]+? [(A-Z)(А-Я)][(a-z)(а-я)]+", line)
+        a = re.fullmatch("[A-ZА-Я][a-zа-я]+? [A-ZА-Я][a-zа-я]+", line)
         if a is None:
             raise Exception(ValueError)
 
@@ -70,7 +79,7 @@ def generate_book(args):
             "pages": random.randint(100, 500),
             "isbn13": fake.isbn13(),
             "rating": random.randint(0, 5),
-            "price": round(random.random()*500,2),
+            "price": round(random.random()*500, 2),
             "discount": sale,
             "author": fetch_authors(amt_authors)
         }
