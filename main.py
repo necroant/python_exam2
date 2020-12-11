@@ -17,10 +17,10 @@ def main():
         book_list.append(next(my_gen_book))
         # print(next(my_gen_book))
 
-    to_json(book_list, "cancer.json")
+    to_json(book_list, "cancer.json", 4)
 
 
-def to_json(obj, filename, dent=0):
+def to_json(obj, filename, dent):
     """
     Function outputs given iterable object to json file
     :param obj: Iterable object to dump to json file
@@ -33,10 +33,26 @@ def to_json(obj, filename, dent=0):
 
 
 def create_parser():
+    """
+    Command line parser initialization
+    :return: Parser
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("count", help="Number of books to generate", type=int)
     parser.add_argument("-a", "--authors", help="Authors per book", type=int, default=-1)
     parser.add_argument("-s", "--sale", help="Sale percentage(0-100)", type=int, default=-1)
+
+    subparsers = parser.add_subparsers()
+
+    json_parser = subparsers.add_parser("json", help="Output books to json file")
+    json_parser.add_argument("-f", "--filename", help="JSON file name", default="cancer.json")
+    json_parser.add_argument("-i", "--indent", help="JSON formatting indent", type=int, default=0)
+
+    csv_parser = subparsers.add_parser("csv", help="Output books to csv file")
+    csv_parser.add_argument("-f", "--filename", help="CSV file name", default="cancer.csv")
+    csv_parser.add_argument("-v", "--v_separator", help="CSV value separator", default=",")
+    csv_parser.add_argument("-l", "--l_separator", help="CSV line separator", default="\n")
+
     return parser
 
 
