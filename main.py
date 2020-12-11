@@ -20,7 +20,14 @@ def main():
     to_json(book_list, "cancer.json")
 
 
-def to_json(obj, filename, dent=4):
+def to_json(obj, filename, dent=0):
+    """
+    Function outputs given iterable object to json file
+    :param obj: Iterable object to dump to json file
+    :param filename: Name of the json file
+    :param dent: Indent to json formatting, default 0 symbols
+    :return: None
+    """
     with open(filename, 'w', encoding="utf-8") as json_file:
         json.dump(obj, json_file, indent=dent, ensure_ascii=False)
 
@@ -36,7 +43,7 @@ def create_parser():
 def fetch_title():
     """
     Fetching the title for a book
-    :return: random title from the list in file set by BOOK_TITLES
+    :return: random title from file, filename set by BOOK_TITLES
     """
     with open(conf.BOOK_TITLES, encoding="utf-8") as titles:
         title_list = titles.readlines()
@@ -47,6 +54,11 @@ def fetch_title():
 
 
 def check_name_file(name_list):
+    """
+    Checking the name file for correct layout
+    :param name_list: Contents of the file
+    :return: None or raises the Exception(ValueError)
+    """
     for line in name_list:
         a = re.fullmatch("[A-ZА-Я][a-zа-я]+? [A-ZА-Я][a-zа-я]+", line)
         if a is None:
@@ -54,6 +66,11 @@ def check_name_file(name_list):
 
 
 def fetch_authors(num):
+    """
+    Fetching authors for the book
+    :param num: Amount of authors the book would have
+    :return: List of names from the file, filename set by AUTHORS
+    """
     with open(conf.AUTHORS, encoding="utf-8") as names:
         name_list = names.readlines()
     name_list = [line.strip() for line in name_list]
@@ -66,6 +83,11 @@ def fetch_authors(num):
 
 
 def generate_book(args):
+    """
+    Generator for a fake book
+    :param args: command line arguments
+    :return: Dict Object, containing a new fake book
+    """
     pk = 0
     fake = Faker()
     Faker.seed(0)
