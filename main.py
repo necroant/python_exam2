@@ -1,4 +1,5 @@
 import conf
+
 import argparse
 import json
 import random
@@ -11,24 +12,55 @@ def main():
     parser = create_parser()
     args = parser.parse_args()
     my_gen_book = generate_book(args)
+    book_list = []
     for i in range(args.count):
-        print(next(my_gen_book))
+        book_list.append(next(my_gen_book))
+        # print(next(my_gen_book))
+
+    to_json(book_list, "cancer.json", 4)
 
 
-def to_json(obj, filename):  # todo Добавить опцию выбора длины отступа
+def to_json(obj, filename, dent):
+    """
+    Function outputs given iterable object to json file
+    :param obj: Iterable object to dump to json file
+    :param filename: Name of the json file
+    :param dent: Indent to json formatting, default 0 symbols
+    :return: None
+    """
     with open(filename, 'w', encoding="utf-8") as json_file:
-        json.dump(obj, json_file, indent=4)
+        json.dump(obj, json_file, indent=dent, ensure_ascii=False)
 
 
 def create_parser():
+    """
+    Command line parser initialization
+    :return: Parser
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("count", help="Number of books to generate", type=int)
     parser.add_argument("-a", "--authors", help="Authors per book", type=int, default=-1)
     parser.add_argument("-s", "--sale", help="Sale percentage(0-100)", type=int, default=-1)
+
+    subparsers = parser.add_subparsers()
+
+    json_parser = subparsers.add_parser("json", help="Output books to json file")
+    json_parser.add_argument("-f", "--filename", help="JSON file name", default="cancer.json")
+    json_parser.add_argument("-i", "--indent", help="JSON formatting indent", type=int, default=0)
+
+    csv_parser = subparsers.add_parser("csv", help="Output books to csv file")
+    csv_parser.add_argument("-f", "--filename", help="CSV file name", default="cancer.csv")
+    csv_parser.add_argument("-v", "--v_separator", help="CSV value separator", default=",")
+    csv_parser.add_argument("-l", "--l_separator", help="CSV line separator", default="\n")
+
     return parser
 
 
 def fetch_title():
+    """
+    Fetching the title for a book
+    :return: random title from file, filename set by BOOK_TITLES
+    """
     with open(conf.BOOK_TITLES, encoding="utf-8") as titles:
         title_list = titles.readlines()
     title_list = [line.strip("\n") for line in title_list]
@@ -38,13 +70,23 @@ def fetch_title():
 
 
 def check_name_file(name_list):
+    """
+    Checking the name file for correct layout
+    :param name_list: Contents of the file
+    :return: None or raises the Exception(ValueError)
+    """
     for line in name_list:
-        a = re.fullmatch("[(A-Z)(А-Я)][(a-z)(а-я)]+? [(A-Z)(А-Я)][(a-z)(а-я)]+", line)
+        a = re.fullmatch("[A-ZА-Я][a-zа-я]+? [A-ZА-Я][a-zа-я]+", line)
         if a is None:
             raise Exception(ValueError)
 
 
 def fetch_authors(num):
+    """
+    Fetching authors for the book
+    :param num: Amount of authors the book would have
+    :return: List of names from the file, filename set by AUTHORS
+    """
     with open(conf.AUTHORS, encoding="utf-8") as names:
         name_list = names.readlines()
     name_list = [line.strip() for line in name_list]
@@ -57,6 +99,11 @@ def fetch_authors(num):
 
 
 def generate_book(args):
+    """
+    Generator for a fake book
+    :param args: command line arguments
+    :return: Dict Object, containing a new fake book
+    """
     pk = 0
     fake = Faker()
     Faker.seed(0)
@@ -70,7 +117,7 @@ def generate_book(args):
             "pages": random.randint(100, 500),
             "isbn13": fake.isbn13(),
             "rating": random.randint(0, 5),
-            "price": round(random.random()*500,2),
+            "price": round(random.random()*500, 2),
             "discount": sale,
             "author": fetch_authors(amt_authors)
         }
