@@ -15,9 +15,26 @@ def main():
     book_list = []
     for i in range(args.count):
         book_list.append(next(my_gen_book))
-        # print(next(my_gen_book))
+    if args.output == 'json':
+        to_json(book_list, args.filename, args.indent)
+        print(f"Output saved to {args.filename}...")
+    elif args.output == 'csv':
+        to_csv(book_list, args.filename, args.v_separator, args.l_separator)
+        print(f"Output saved to {args.filename}...")
+    else:
+        print(next(my_gen_book))
 
-    to_json(book_list, "cancer.json", 4)
+
+def to_csv(obj, filename, v_sep, l_sep):
+    """
+    Function outputs given iterable object to csv file
+    :param obj: Iterable object to dump to csv file
+    :param filename: Iterable object to dump to csv file
+    :param v_sep: Symbol to use as value separator
+    :param l_sep: Symbol to use as line separator
+    :return:
+    """
+    ...
 
 
 def to_json(obj, filename, dent):
@@ -42,7 +59,7 @@ def create_parser():
     parser.add_argument("-a", "--authors", help="Authors per book", type=int, default=-1)
     parser.add_argument("-s", "--sale", help="Sale percentage(0-100)", type=int, default=-1)
 
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(dest="output", required=False)
 
     json_parser = subparsers.add_parser("json", help="Output books to json file")
     json_parser.add_argument("-f", "--filename", help="JSON file name", default="cancer.json")
