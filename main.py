@@ -79,7 +79,7 @@ def create_parser():
     return parser
 
 
-def fetch_title():
+def fetch_title() -> str:
     """
     Fetching the title for a book
     :return: random title from file, filename set by BOOK_TITLES
@@ -104,7 +104,7 @@ def check_name_file(name_list: list):
             raise Exception(ValueError)
 
 
-def fetch_authors(num: int):
+def fetch_authors(num: int) -> list:
     """
     Fetching authors for the book
     :param num: Amount of authors the book would have
@@ -121,7 +121,7 @@ def fetch_authors(num: int):
     return author_names
 
 
-def generate_book(args):
+def generate_book(args) -> dict:
     """
     Generator for a fake book
     :param args: command line arguments
