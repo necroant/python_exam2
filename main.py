@@ -1,11 +1,12 @@
-import conf
-
 import argparse
 import json
+import csv
 import random
 import re
 
 from faker import Faker
+
+import conf
 
 
 def main():
@@ -22,10 +23,11 @@ def main():
         to_csv(book_list, args.filename, args.v_separator, args.l_separator)
         print(f"Output saved to {args.filename}...")
     else:
-        print(next(my_gen_book))
+        for book in book_list:
+            print(book)
 
 
-def to_csv(obj, filename, v_sep, l_sep):
+def to_csv(obj: list, filename: str, v_sep: str, l_sep: str):
     """
     Function outputs given iterable object to csv file
     :param obj: Iterable object to dump to csv file
@@ -34,10 +36,14 @@ def to_csv(obj, filename, v_sep, l_sep):
     :param l_sep: Symbol to use as line separator
     :return:
     """
-    ...
+    with open(filename, 'w', encoding="utf-8") as csv_file:
+        book_writer = csv.writer(csv_file, delimiter=v_sep, lineterminator=l_sep, quoting=csv.QUOTE_MINIMAL)
+        for book in obj:
+            for key, value in book.items():
+                book_writer.writerow([key, value])
 
 
-def to_json(obj, filename, dent):
+def to_json(obj: list, filename: str, dent: int):
     """
     Function outputs given iterable object to json file
     :param obj: Iterable object to dump to json file
@@ -86,7 +92,7 @@ def fetch_title():
     return title
 
 
-def check_name_file(name_list):
+def check_name_file(name_list: list):
     """
     Checking the name file for correct layout
     :param name_list: Contents of the file
@@ -98,7 +104,7 @@ def check_name_file(name_list):
             raise Exception(ValueError)
 
 
-def fetch_authors(num):
+def fetch_authors(num: int):
     """
     Fetching authors for the book
     :param num: Amount of authors the book would have
